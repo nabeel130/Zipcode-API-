@@ -1,5 +1,5 @@
 from django.db import models
-# import request
+import requests
 
 # Create your models here.
 class Location(models.Model):
@@ -12,8 +12,10 @@ class Location(models.Model):
 
 
     def save(self,*args,**kwargs):
-        # r = request.get(f'https://public.opendatasoft.com/api/records/1.0/search/?dataset=us-zip-code-latitude-and-longitude&q=&facet=state&facet=timezone&facet=dst')
-        self.latitude = 123.456
-        self.longitude = 123.456
+        r = requests.get(f'https://public.opendatasoft.com/api/records/1.0/search/?dataset=us-zip-code-latitude-and-longitude&q={self.zip_code}&facet=state&facet=timezone&facet=dst')
+        
+        
+        self.latitude = r.json()['records'][0]['fields']['latitude']
+        self.longitude = r.json()['records'][0]['fields']['longitude']
 
         super().save(*args , **kwargs)
